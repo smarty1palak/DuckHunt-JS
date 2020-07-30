@@ -582,8 +582,8 @@ class Game {
     if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
       sound.play('gunSound');
       this.bullets -= 1;
-      const timer = this.waveElapsedTime;
-      this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius), event.data.global.x, event.data.global.y, this.timer);
+      const timer = this.waveElapsedTime();
+      this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius), event.data.global.x, event.data.global.y, timer);
       return;
     }
 
