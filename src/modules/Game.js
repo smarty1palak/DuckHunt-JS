@@ -24,6 +24,8 @@ class Game {
    * @returns {Game}
    */
   constructor(opts) {
+    this.person = (+new Date).toString(36);
+    console.log(this.person);
     this.spritesheet = opts.spritesheet;
     this.loader = loader;
     this.renderer =  autoDetectRenderer(window.innerWidth, window.innerHeight, {
