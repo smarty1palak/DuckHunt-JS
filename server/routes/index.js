@@ -28,26 +28,17 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/data',(req, res) => {
-  var user = req.body.user;
-  var xcoord = req.body.xcoord;
-  var ycoord = req.body.ycoord;
-  var hitmiss = req.body.hitmiss;
-  var time = req.body.time;
-  console.log(user,xcoord,ycoord,hitmiss,time);
+  var user=req.body.user;
+  var xcoord=req.body.xcoord;
+  var ycoord=req.body.ycoord;
+  var hitmiss=req.body.hitmiss;
+  var time=req.body.time;
+  var level = req.body.level;
+  var wave = req.body.wave;
+  console.log(user,xcoord,ycoord,hitmiss,time,level,wave);
   newobj = req.body
   objArray.push(newobj)
   res.end("yes");
-
-  
-  // if(objArray.length==2){
-  //   apidata = loadData("./apidata.json");
-  //   console.log("opened",apidata);
-  //   apidata.data = apidata.data.concat(objArray);
-  //   console.log(apidata.body);
-  //   storeData(apidata,"./apidata.json") 
-  //   objArray.length=0
-  // }
-
 });
 
 setInterval(function(){ 
