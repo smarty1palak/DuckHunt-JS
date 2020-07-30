@@ -596,7 +596,7 @@ class Game {
     this.ducksShot += ducksShot;
     this.ducksShotThisWave += ducksShot;
     this.score += ducksShot * this.level.pointsPerDuck;
-    var duck_payload = { xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer};
+    var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer};
     console.log(duck_payload);
     // const duckAPI = async () => {
     //   const response = await fetch('', {
