@@ -12,7 +12,9 @@ router.post('/data',(req, res) => {
   var ycoord=req.body.ycoord;
   var hitmiss=req.body.hitmiss;
   var time=req.body.time;
-  console.log(user,xcoord,ycoord,hitmiss,time);
+  var level = req.body.level;
+  var wave = req.body.wave;
+  console.log(user,xcoord,ycoord,hitmiss,time,level,wave);
 
   res.end("yes");
 });
