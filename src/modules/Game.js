@@ -598,15 +598,12 @@ class Game {
     this.score += ducksShot * this.level.pointsPerDuck;
     var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer};
     console.log(duck_payload);
-    // const duckAPI = async () => {
-    //   const response = await fetch('', {
-    //     method: 'POST',
-    //     body: duck_payload,
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   });
-    // }
+    fetch("http://localhost:3000/data", {
+      method: "POST", 
+      body: JSON.stringify(duck_payload)
+    }).then(res => {
+      console.log("Request complete! response:", res);
+    });
   }
 
   animate() {
