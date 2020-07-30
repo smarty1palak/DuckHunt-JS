@@ -1,5 +1,5 @@
-import {loader, autoDetectRenderer} from 'pixi.js';
-import {remove as _remove} from 'lodash/array';
+import { loader, autoDetectRenderer } from 'pixi.js';
+import { remove as _remove } from 'lodash/array';
 import levels from '../data/levels.json';
 import Stage from './Stage';
 import sound from './Sound';
@@ -28,7 +28,7 @@ class Game {
     console.log(this.person);
     this.spritesheet = opts.spritesheet;
     this.loader = loader;
-    this.renderer =  autoDetectRenderer(window.innerWidth, window.innerHeight, {
+    this.renderer = autoDetectRenderer(window.innerWidth, window.innerHeight, {
       backgroundColor: BLUE_SKY_COLOR
     });
     this.levelIndex = 0;
@@ -53,7 +53,7 @@ class Game {
 
     if (this.stage && this.stage.hud) {
 
-      if (!Object.prototype.hasOwnProperty.call(this.stage.hud,'ducksMissed')) {
+      if (!Object.prototype.hasOwnProperty.call(this.stage.hud, 'ducksMissed')) {
         this.stage.hud.createTextureBasedCounter('ducksMissed', {
           texture: 'hud/score-live/0.png',
           spritesheet: this.spritesheet,
@@ -76,12 +76,12 @@ class Game {
 
     if (this.stage && this.stage.hud) {
 
-      if (!Object.prototype.hasOwnProperty.call(this.stage.hud,'ducksShot')) {
+      if (!Object.prototype.hasOwnProperty.call(this.stage.hud, 'ducksShot')) {
         this.stage.hud.createTextureBasedCounter('ducksShot', {
           texture: 'hud/score-dead/0.png',
           spritesheet: this.spritesheet,
           location: Stage.deadDuckStatusBoxLocation(),
-          rowMax:20,
+          rowMax: 20,
           max: 20
         });
       }
@@ -109,7 +109,7 @@ class Game {
 
     if (this.stage && this.stage.hud) {
 
-      if (!Object.prototype.hasOwnProperty.call(this.stage.hud,'bullets')) {
+      if (!Object.prototype.hasOwnProperty.call(this.stage.hud, 'bullets')) {
         this.stage.hud.createTextureBasedCounter('bullets', {
           texture: 'hud/bullet/0.png',
           spritesheet: this.spritesheet,
@@ -144,7 +144,7 @@ class Game {
 
     if (this.stage && this.stage.hud) {
 
-      if (!Object.prototype.hasOwnProperty.call(this.stage.hud,'score')) {
+      if (!Object.prototype.hasOwnProperty.call(this.stage.hud, 'score')) {
         this.stage.hud.createTextBox('score', {
           style: {
             fontFamily: 'Arial',
@@ -185,7 +185,7 @@ class Game {
 
     if (this.stage && this.stage.hud) {
 
-      if (!Object.prototype.hasOwnProperty.call(this.stage.hud,'waveStatus')) {
+      if (!Object.prototype.hasOwnProperty.call(this.stage.hud, 'waveStatus')) {
         this.stage.hud.createTextBox('waveStatus', {
           style: {
             fontFamily: 'Arial',
@@ -226,7 +226,7 @@ class Game {
 
     if (this.stage && this.stage.hud) {
 
-      if (!Object.prototype.hasOwnProperty.call(this.stage.hud,'gameStatus')) {
+      if (!Object.prototype.hasOwnProperty.call(this.stage.hud, 'gameStatus')) {
         this.stage.hud.createTextBox('gameStatus', {
           style: {
             fontFamily: 'Arial',
@@ -383,7 +383,7 @@ class Game {
   }
 
   removeActiveSound(soundId) {
-    _remove(this.activeSounds, function(item) {
+    _remove(this.activeSounds, function (item) {
       return item === soundId;
     });
   }
@@ -596,14 +596,36 @@ class Game {
     this.ducksShot += ducksShot;
     this.ducksShotThisWave += ducksShot;
     this.score += ducksShot * this.level.pointsPerDuck;
-    var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer};
-    console.log(duck_payload);
-    fetch("http://localhost:3000/data", {
-      method: "POST", 
-      body: JSON.stringify(duck_payload)
-    }).then(res => {
-      console.log("Request complete! response:", res);
-    });
+    // var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer };
+    // console.log(duck_payload);
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("xcoord", x);
+    urlencoded.append("ycoord", y);
+    urlencoded.append("hitmiss", ducksShot);
+    urlencoded.append("time", timer);
+    urlencoded.append("user", this.person);
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: 'follow'
+    };
+    fetch("http://localhost:3000/data", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+
+
+    // fetch("http://localhost:3000/data", {
+    //   method: "POST", 
+    //   headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    //   body: JSON.stringify(duck_payload)
+    // }).then(res => {
+    //   console.log("Request complete! response:", res);
+    // });
   }
 
   animate() {
