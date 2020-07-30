@@ -24,7 +24,11 @@ class Game {
    * @returns {Game}
    */
   constructor(opts) {
-    this.person = (+new Date).toString(36);
+    // this.person = (+new Date).toString(36);
+    while(!this.person)
+    {
+      this.person = prompt("Please enter your name");
+    }
     console.log(this.person);
     this.spritesheet = opts.spritesheet;
     this.loader = loader;
