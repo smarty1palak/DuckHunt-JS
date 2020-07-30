@@ -580,7 +580,8 @@ class Game {
     if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
       sound.play('gunSound');
       this.bullets -= 1;
-      this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius));
+      const timer = this.waveElapsedTime;
+      this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius), event.data.global.x, event.data.global.y, this.timer);
       return;
     }
 
@@ -589,10 +590,21 @@ class Game {
     }
   }
 
-  updateScore(ducksShot) {
+  updateScore(ducksShot, x, y, timer) {
     this.ducksShot += ducksShot;
     this.ducksShotThisWave += ducksShot;
     this.score += ducksShot * this.level.pointsPerDuck;
+    var duck_payload = { xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer};
+    console.log(duck_payload);
+    // const duckAPI = async () => {
+    //   const response = await fetch('', {
+    //     method: 'POST',
+    //     body: duck_payload,
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   });
+    // }
   }
 
   animate() {
