@@ -1,9 +1,40 @@
+// import {pushDataToKafka} from './producer.js';
 var express = require('express');
 var router = express.Router();
 var objArray = [];
 var fs = require('fs');
 var path = require('path');
 var appDir = path.dirname(require.main.filename);
+const producer = require('./producer');
+
+
+// const Producer = Kafka.Producer;
+// const client = new Kafka.KafkaClient({kafkaHost: "localhost:9092"});
+// const producer = new Producer(client,  {requireAcks: 0, partitionerType: 2});
+
+
+
+// const pushDataToKafka =(dataToPush) => {
+
+//   try {
+//   let payloadToKafkaTopic = [{topic: "test", messages: JSON.stringify(dataToPush) }];
+//   console.log(payloadToKafkaTopic);
+//   producer.on('ready', async function() {
+//     producer.send(payloadToKafkaTopic, (err, data) => {
+//           console.log('data: ', data);
+//   });
+
+//   producer.on('error', function(err) {
+//     //  handle error cases here
+//   })
+//   })
+//   }
+// catch(error) {
+//   console.log(error);
+// }
+
+// };
+
 
 const storeData = (data, path) => {
   try {
@@ -42,7 +73,7 @@ router.post('/data',(req, res) => {
 });
 
 setInterval(function(){ 
-  if(objArray.length<20){
+  if(objArray.length<2){
     return
   }
   console.log("obarray len",objArray.length)
@@ -50,7 +81,8 @@ setInterval(function(){
   var apidata = JSON.parse(rawdata);
   console.log("read",apidata)
   apidata.data = apidata.data.concat(objArray);
-  storeData(apidata,"./apidata.json") 
+  storeData(apidata,"./apidata.json");
+  producer.pushDataToKafka(objArray);
   objArray = []
 }, 3000);
 
