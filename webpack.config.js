@@ -44,7 +44,7 @@ module.exports = {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     inline: true,
-    port: 8080
+    port: 9090
   },
   plugins: [
     new HardSourcePlugin({

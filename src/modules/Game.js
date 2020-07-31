@@ -5,6 +5,8 @@ import Stage from './Stage';
 import sound from './Sound';
 import levelCreator from '../libs/levelCreator.js';
 import utils from '../libs/utils';
+import Axios from 'axios';
+// var request = require('request');
 // import pushDataToKafka from '../../messaging/producer.js'
 
 const BLUE_SKY_COLOR = 0x64b0ff;
@@ -26,8 +28,7 @@ class Game {
    */
   constructor(opts) {
     // this.person = (+new Date).toString(36);
-    while(!this.person)
-    {
+    while (!this.person) {
       this.person = prompt("Please enter your name");
     }
     console.log(this.person);
@@ -42,7 +43,7 @@ class Game {
     this.muted = false;
     this.paused = false;
     this.activeSounds = [];
-
+    this.hitStartTime = Date.now();
     this.waveEnding = false;
     this.quackingSoundId = null;
     this.levels = levels.normal;
@@ -475,6 +476,10 @@ class Game {
     return ((Date.now() - this.waveStartTime) / 1000) - this.timePaused;
   }
 
+  hitElaspedTime(){
+    return ((Date.now() - this.hitStartTime) / 1000) - this.timePaused;
+  }
+
   outOfAmmo() {
     return this.level && this.bullets === 0;
   }
@@ -587,7 +592,7 @@ class Game {
     if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
       sound.play('gunSound');
       this.bullets -= 1;
-      const timer = this.waveElapsedTime();
+      const timer = this.hitElaspedTime();
       this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius), event.data.global.x, event.data.global.y, timer);
       return;
     }
@@ -601,40 +606,45 @@ class Game {
     this.ducksShot += ducksShot;
     this.ducksShotThisWave += ducksShot;
     this.score += ducksShot * this.level.pointsPerDuck;
-    // var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer , wave: this.wave, level: this.level.id};
-    // console.log(duck_payload);
 
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-    var urlencoded = new URLSearchParams();
-    urlencoded.append("xcoord", x);
-    urlencoded.append("ycoord", y);
-    urlencoded.append("hitmiss", ducksShot);
-    urlencoded.append("time", timer);
-    urlencoded.append("user", this.person);
-    urlencoded.append("level", this.level.id);
-    urlencoded.append("wave", this.wave);
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: urlencoded,
-      redirect: 'follow'
+    if(ducksShot){
+      this.hitStartTime = Date.now();
+    }
+
+    var duck_payload = { user: this.person, hitmiss: ducksShot, time: timer, wave: this.wave, level: this.level.id };
+
+  //   var requestOptions = {
+  //     method: 'GET',
+  //     redirect: 'follow',
+  //     mode: 'cors'
+  //   };
+
+  //   fetch("https://localhost:8080/demo?user=sanjay&hitmiss=0&time=1.217&wave=1&level=1", requestOptions)
+  // .then(response => response.text())
+  // .then(result => console.log(result))
+  // .catch(error => console.log('error', error));
+    // fetch("http://localhost:8080/demo?" + "user=" + duck_payload.user + "&hitmiss=" + 
+    // String(duck_payload.hitmiss) + "&time=" + String(duck_payload.time) + "&wave=" + 
+    // String(duck_payload.wave) + "&level=" + String(duck_payload.level), requestOptions)
+    //   .then(response => response.text())
+    //   .then(result => console.log(result))
+    //   .catch(error => console.log('error', error));
+    // request.get(
+    //     "http://localhost:8080/demo?" + "user=" + duck_payload.user + "&hitmiss=" + 
+    //     String(duck_payload.hitmiss) + "&time=" + String(duck_payload.time) + "&wave=" + 
+    //     String(duck_payload.wave) + "&level=" + String(duck_payload.level),
+    //     function(err,res,body){
+    //     });
+    var config = {
+      headers: {'Access-Control-Allow-Origin': '*'}
     };
-    fetch("http://localhost:3000/data", requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
-      .catch(error => console.log('error', error));
-
-    // pushDataToKafka(urlencoded);
-
-
-    // fetch("http://localhost:3000/data", {
-    //   method: "POST", 
-    //   headers: {"Content-Type": "application/x-www-form-urlencoded"},
-    //   body: JSON.stringify(duck_payload)
-    // }).then(res => {
-    //   console.log("Request complete! response:", res);
-    // });
+    Axios.get(
+      "http://localhost:8080/demo?" + "user=" + duck_payload.user + "&hitmiss=" + 
+    String(duck_payload.hitmiss) + "&time=" + String(duck_payload.time) + "&wave=" + 
+    String(duck_payload.wave) + "&level=" + String(duck_payload.level),config
+      ).then(response=>{}).catch(error=>{
+      //we can update state to an error to show meaningful message on screen
+   });
   }
 
   animate() {
