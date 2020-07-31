@@ -5,6 +5,7 @@ import Stage from './Stage';
 import sound from './Sound';
 import levelCreator from '../libs/levelCreator.js';
 import utils from '../libs/utils';
+import pushDataToKafka from '../../messaging/producer.js'
 
 const BLUE_SKY_COLOR = 0x64b0ff;
 const PINK_SKY_COLOR = 0xfbb4d4;
@@ -613,16 +614,18 @@ class Game {
     urlencoded.append("user", this.person);
     urlencoded.append("level", this.level.id);
     urlencoded.append("wave", this.wave);
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: urlencoded,
-      redirect: 'follow'
-    };
-    fetch("http://localhost:3000/data", requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
-      .catch(error => console.log('error', error));
+    // var requestOptions = {
+    //   method: 'POST',
+    //   headers: myHeaders,
+    //   body: urlencoded,
+    //   redirect: 'follow'
+    // };
+    // fetch("http://localhost:3000/data", requestOptions)
+    //   .then(response => response.text())
+    //   .then(result => console.log(result))
+    //   .catch(error => console.log('error', error));
+
+    pushDataToKafka(urlencoded);
 
 
     // fetch("http://localhost:3000/data", {
