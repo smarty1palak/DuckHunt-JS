@@ -600,7 +600,7 @@ class Game {
     this.ducksShot += ducksShot;
     this.ducksShotThisWave += ducksShot;
     this.score += ducksShot * this.level.pointsPerDuck;
-    // var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer };
+    // var duck_payload = { user: this.person, xcoord: x, ycoord: y, hitmiss: ducksShot, time: timer , wave: this.wave, level: this.level.id};
     // console.log(duck_payload);
 
     var myHeaders = new Headers();
@@ -611,6 +611,8 @@ class Game {
     urlencoded.append("hitmiss", ducksShot);
     urlencoded.append("time", timer);
     urlencoded.append("user", this.person);
+    urlencoded.append("level", this.level.id);
+    urlencoded.append("wave", this.wave);
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
